@@ -1,4 +1,4 @@
-module Example exposing (..)
+module TreeTests exposing (..)
 
 import Expect exposing (Expectation)
 import Test exposing (..)
@@ -71,5 +71,34 @@ suite =
             , test "post-order" <|
                 \_ ->
                     Expect.equal [ 4, 3, 6, 9, 7, 5 ] (postOrder mytesttree)
+            ]
+        , describe "tests for map"
+            [ test "map adding 1" <|
+                \_ ->
+                    let
+                        newTree =
+                            preOrder
+                                (map (\n -> n + 1) mytesttree)
+                    in
+                        Expect.equal [ 6, 4, 5, 8, 7, 10 ] newTree
+            , test "foldMap adding 1" <|
+                \_ ->
+                    let
+                        newTree =
+                            preOrder
+                                (foldMap (\n -> n + 1) mytesttree)
+                    in
+                        Expect.equal [ 6, 4, 5, 8, 7, 10 ] newTree
+            ]
+        , describe "tests for foldDepth"
+            [ test "depth of mytestttee" <|
+                \_ ->
+                    Expect.equal (depth mytesttree) (foldDepth mytesttree)
+            , test "depth of deepTree" <|
+                \_ ->
+                    Expect.equal (depth deepTree) (foldDepth deepTree)
+            , test "depth of niceTree" <|
+                \_ ->
+                    Expect.equal (depth niceTree) (foldDepth niceTree)
             ]
         ]

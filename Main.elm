@@ -180,6 +180,16 @@ fold function accumulator tree =
                 fold function (fold function thisNode left) right
 
 
+reduce : (a -> b -> b -> b) -> b -> Tree a -> b
+reduce fun accumulator tree =
+    case tree of
+        Empty ->
+            accumulator
+
+        Node x left right ->
+            fun x (reduce fun accumulator left) (reduce fun accumulator right)
+
+
 
 {- (5) Use "fold" to do exercises 1-3 in one line each. The best
    readable versions I have come up have the following length
@@ -201,6 +211,11 @@ foldSum tree =
     fold (+) 0 tree
 
 
+reduceSum : Tree Int -> Int
+reduceSum tree =
+    reduce (\accumulator l r -> accumulator + l + r) 0 tree
+
+
 foldFlatten : Tree a -> List a
 foldFlatten tree =
     fold (::) [] tree
@@ -213,7 +228,23 @@ foldContains tree item =
 
 
 --(6) Can "fold" be used to implement "map" or "depth"?
---TODO
+
+
+foldMap : (a -> comparable) -> Tree a -> Tree comparable
+foldMap function tree =
+    fold (\x -> insert (function x)) empty tree
+
+
+foldDepth : Tree number -> number
+foldDepth tree =
+    --    fold (\val acc -> (1 + acc)) 0 tree
+    reduce (\v l r -> 1 + max l r) 0 tree
+
+
+
+--
+--
+--
 --(7) Try experimenting with different ways to traverse a
 --    tree: pre-order, in-order, post-order, depth-first, etc.
 --    More info at: http://en.wikipedia.org/wiki/Tree_traversal
@@ -250,4 +281,4 @@ postOrder tree =
 
 
 
---TODO: breadth first search
+--TODO: breadth first search??

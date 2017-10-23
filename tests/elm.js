@@ -13477,36 +13477,72 @@ var _elm_community$elm_test$Test$FuzzOptions = function (a) {
 	return {runs: a};
 };
 
-var _user$project$Main$preOrder = function (tree) {
+var _user$project$Main$postOrder = function (tree) {
 	var _p0 = tree;
 	if (_p0.ctor === 'Empty') {
 		return {ctor: '[]'};
 	} else {
 		return A2(
 			_elm_lang$core$List$append,
+			A2(
+				_elm_lang$core$List$append,
+				_user$project$Main$postOrder(_p0._1),
+				_user$project$Main$postOrder(_p0._2)),
 			{
 				ctor: '::',
 				_0: _p0._0,
-				_1: _user$project$Main$preOrder(_p0._1)
+				_1: {ctor: '[]'}
+			});
+	}
+};
+var _user$project$Main$inOrder = function (tree) {
+	var _p1 = tree;
+	if (_p1.ctor === 'Empty') {
+		return {ctor: '[]'};
+	} else {
+		return A2(
+			_elm_lang$core$List$append,
+			A2(
+				_elm_lang$core$List$append,
+				_user$project$Main$inOrder(_p1._1),
+				{
+					ctor: '::',
+					_0: _p1._0,
+					_1: {ctor: '[]'}
+				}),
+			_user$project$Main$inOrder(_p1._2));
+	}
+};
+var _user$project$Main$preOrder = function (tree) {
+	var _p2 = tree;
+	if (_p2.ctor === 'Empty') {
+		return {ctor: '[]'};
+	} else {
+		return A2(
+			_elm_lang$core$List$append,
+			{
+				ctor: '::',
+				_0: _p2._0,
+				_1: _user$project$Main$preOrder(_p2._1)
 			},
-			_user$project$Main$preOrder(_p0._2));
+			_user$project$Main$preOrder(_p2._2));
 	}
 };
 var _user$project$Main$fold = F3(
 	function ($function, accumulator, tree) {
 		fold:
 		while (true) {
-			var _p1 = tree;
-			if (_p1.ctor === 'Empty') {
+			var _p3 = tree;
+			if (_p3.ctor === 'Empty') {
 				return accumulator;
 			} else {
-				var thisNode = A2($function, _p1._0, accumulator);
-				var _v2 = $function,
-					_v3 = A3(_user$project$Main$fold, $function, thisNode, _p1._1),
-					_v4 = _p1._2;
-				$function = _v2;
-				accumulator = _v3;
-				tree = _v4;
+				var thisNode = A2($function, _p3._0, accumulator);
+				var _v4 = $function,
+					_v5 = A3(_user$project$Main$fold, $function, thisNode, _p3._1),
+					_v6 = _p3._2;
+				$function = _v4;
+				accumulator = _v5;
+				tree = _v6;
 				continue fold;
 			}
 		}
@@ -13535,7 +13571,7 @@ var _user$project$Main$foldContains = F2(
 	function (tree, item) {
 		return A3(
 			_user$project$Main$fold,
-			function (_p2) {
+			function (_p4) {
 				return F2(
 					function (x, y) {
 						return x || y;
@@ -13546,44 +13582,44 @@ var _user$project$Main$foldContains = F2(
 								return _elm_lang$core$Native_Utils.eq(x, y);
 							}),
 						item,
-						_p2));
+						_p4));
 			},
 			false,
 			tree);
 	});
 var _user$project$Main$contains = F2(
 	function (tree, item) {
-		var _p3 = tree;
-		if (_p3.ctor === 'Empty') {
+		var _p5 = tree;
+		if (_p5.ctor === 'Empty') {
 			return false;
 		} else {
-			return _elm_lang$core$Native_Utils.eq(_p3._0, item) ? true : (A2(_user$project$Main$contains, _p3._1, item) || A2(_user$project$Main$contains, _p3._2, item));
+			return _elm_lang$core$Native_Utils.eq(_p5._0, item) ? true : (A2(_user$project$Main$contains, _p5._1, item) || A2(_user$project$Main$contains, _p5._2, item));
 		}
 	});
 var _user$project$Main$flatten = function (tree) {
-	var _p4 = tree;
-	if (_p4.ctor === 'Empty') {
+	var _p6 = tree;
+	if (_p6.ctor === 'Empty') {
 		return {ctor: '[]'};
 	} else {
 		return A2(
 			_elm_lang$core$List$append,
-			_user$project$Main$flatten(_p4._1),
+			_user$project$Main$flatten(_p6._1),
 			A2(
 				_elm_lang$core$List$append,
 				{
 					ctor: '::',
-					_0: _p4._0,
+					_0: _p6._0,
 					_1: {ctor: '[]'}
 				},
-				_user$project$Main$flatten(_p4._2)));
+				_user$project$Main$flatten(_p6._2)));
 	}
 };
 var _user$project$Main$sum = function (tree) {
-	var _p5 = tree;
-	if (_p5.ctor === 'Empty') {
+	var _p7 = tree;
+	if (_p7.ctor === 'Empty') {
 		return 0;
 	} else {
-		return (_p5._0 + _user$project$Main$sum(_p5._1)) + _user$project$Main$sum(_p5._2);
+		return (_p7._0 + _user$project$Main$sum(_p7._1)) + _user$project$Main$sum(_p7._2);
 	}
 };
 var _user$project$Main$display = F2(
@@ -13605,14 +13641,14 @@ var _user$project$Main$display = F2(
 			});
 	});
 var _user$project$Main$depth = function (tree) {
-	var _p6 = tree;
-	if (_p6.ctor === 'Empty') {
+	var _p8 = tree;
+	if (_p8.ctor === 'Empty') {
 		return 0;
 	} else {
 		return 1 + A2(
 			_elm_lang$core$Basics$max,
-			_user$project$Main$depth(_p6._1),
-			_user$project$Main$depth(_p6._2));
+			_user$project$Main$depth(_p8._1),
+			_user$project$Main$depth(_p8._2));
 	}
 };
 var _user$project$Main$Node = F3(
@@ -13626,22 +13662,22 @@ var _user$project$Main$singleton = function (v) {
 };
 var _user$project$Main$insert = F2(
 	function (x, tree) {
-		var _p7 = tree;
-		if (_p7.ctor === 'Empty') {
+		var _p9 = tree;
+		if (_p9.ctor === 'Empty') {
 			return _user$project$Main$singleton(x);
 		} else {
-			var _p10 = _p7._0;
-			var _p9 = _p7._2;
-			var _p8 = _p7._1;
-			return (_elm_lang$core$Native_Utils.cmp(x, _p10) > 0) ? A3(
+			var _p12 = _p9._0;
+			var _p11 = _p9._2;
+			var _p10 = _p9._1;
+			return (_elm_lang$core$Native_Utils.cmp(x, _p12) > 0) ? A3(
 				_user$project$Main$Node,
+				_p12,
 				_p10,
-				_p8,
-				A2(_user$project$Main$insert, x, _p9)) : ((_elm_lang$core$Native_Utils.cmp(x, _p10) < 0) ? A3(
+				A2(_user$project$Main$insert, x, _p11)) : ((_elm_lang$core$Native_Utils.cmp(x, _p12) < 0) ? A3(
 				_user$project$Main$Node,
-				_p10,
-				A2(_user$project$Main$insert, x, _p8),
-				_p9) : tree);
+				_p12,
+				A2(_user$project$Main$insert, x, _p10),
+				_p11) : tree);
 		}
 	});
 var _user$project$Main$fromList = function (xs) {
@@ -13677,28 +13713,31 @@ var _user$project$Main$niceTree = _user$project$Main$fromList(
 	});
 var _user$project$Main$mytesttree = A2(
 	_user$project$Main$insert,
-	9,
+	6,
 	A2(
 		_user$project$Main$insert,
-		7,
+		9,
 		A2(
 			_user$project$Main$insert,
-			4,
+			7,
 			A2(
 				_user$project$Main$insert,
-				3,
-				_user$project$Main$singleton(5)))));
+				4,
+				A2(
+					_user$project$Main$insert,
+					3,
+					_user$project$Main$singleton(5))))));
 var _user$project$Main$map = F2(
 	function (f, tree) {
-		var _p11 = tree;
-		if (_p11.ctor === 'Empty') {
+		var _p13 = tree;
+		if (_p13.ctor === 'Empty') {
 			return _user$project$Main$Empty;
 		} else {
 			return A3(
 				_user$project$Main$Node,
-				f(_p11._0),
-				A2(_user$project$Main$map, f, _p11._1),
-				A2(_user$project$Main$map, f, _p11._2));
+				f(_p13._0),
+				A2(_user$project$Main$map, f, _p13._1),
+				A2(_user$project$Main$map, f, _p13._2));
 		}
 	});
 var _user$project$Main$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
@@ -13742,7 +13781,7 @@ var _user$project$Main$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProg
 			}
 		}));
 
-var _user$project$Example$suite = A2(
+var _user$project$TreeTests$suite = A2(
 	_elm_community$elm_test$Test$describe,
 	'testing stuff',
 	{
@@ -13759,7 +13798,7 @@ var _user$project$Example$suite = A2(
 						var tree = _user$project$Main$mytesttree;
 						return A2(
 							_elm_community$elm_test$Expect$equal,
-							28,
+							34,
 							_user$project$Main$sum(tree));
 					}),
 				_1: {ctor: '[]'}
@@ -13788,11 +13827,15 @@ var _user$project$Example$suite = A2(
 											_0: 5,
 											_1: {
 												ctor: '::',
-												_0: 7,
+												_0: 6,
 												_1: {
 													ctor: '::',
-													_0: 9,
-													_1: {ctor: '[]'}
+													_0: 7,
+													_1: {
+														ctor: '::',
+														_0: 9,
+														_1: {ctor: '[]'}
+													}
 												}
 											}
 										}
@@ -13908,7 +13951,7 @@ var _user$project$Example$suite = A2(
 										function (_p8) {
 											return A2(
 												_elm_community$elm_test$Expect$equal,
-												28,
+												34,
 												A3(
 													_user$project$Main$fold,
 													F2(
@@ -13935,7 +13978,7 @@ var _user$project$Example$suite = A2(
 									function (_p9) {
 										return A2(
 											_elm_community$elm_test$Expect$equal,
-											28,
+											34,
 											_user$project$Main$foldSum(_user$project$Main$mytesttree));
 									}),
 								_1: {ctor: '[]'}
@@ -13958,17 +14001,21 @@ var _user$project$Example$suite = A2(
 													_0: 9,
 													_1: {
 														ctor: '::',
-														_0: 7,
+														_0: 6,
 														_1: {
 															ctor: '::',
-															_0: 4,
+															_0: 7,
 															_1: {
 																ctor: '::',
-																_0: 3,
+																_0: 4,
 																_1: {
 																	ctor: '::',
-																	_0: 5,
-																	_1: {ctor: '[]'}
+																	_0: 3,
+																	_1: {
+																		ctor: '::',
+																		_0: 5,
+																		_1: {ctor: '[]'}
+																	}
 																}
 															}
 														}
@@ -14050,20 +14097,24 @@ var _user$project$Example$suite = A2(
 														_elm_community$elm_test$Expect$equal,
 														{
 															ctor: '::',
-															_0: 9,
+															_0: 5,
 															_1: {
 																ctor: '::',
-																_0: 7,
+																_0: 3,
 																_1: {
 																	ctor: '::',
 																	_0: 4,
 																	_1: {
 																		ctor: '::',
-																		_0: 3,
+																		_0: 7,
 																		_1: {
 																			ctor: '::',
-																			_0: 5,
-																			_1: {ctor: '[]'}
+																			_0: 6,
+																			_1: {
+																				ctor: '::',
+																				_0: 9,
+																				_1: {ctor: '[]'}
+																			}
 																		}
 																	}
 																}
@@ -14071,9 +14122,131 @@ var _user$project$Example$suite = A2(
 														},
 														_user$project$Main$preOrder(_user$project$Main$mytesttree));
 												}),
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_community$elm_test$Test$test,
+													'in-order',
+													function (_p16) {
+														return A2(
+															_elm_community$elm_test$Expect$equal,
+															{
+																ctor: '::',
+																_0: 3,
+																_1: {
+																	ctor: '::',
+																	_0: 4,
+																	_1: {
+																		ctor: '::',
+																		_0: 5,
+																		_1: {
+																			ctor: '::',
+																			_0: 6,
+																			_1: {
+																				ctor: '::',
+																				_0: 7,
+																				_1: {
+																					ctor: '::',
+																					_0: 9,
+																					_1: {ctor: '[]'}
+																				}
+																			}
+																		}
+																	}
+																}
+															},
+															_user$project$Main$inOrder(_user$project$Main$mytesttree));
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_community$elm_test$Test$test,
+														'post-order',
+														function (_p17) {
+															return A2(
+																_elm_community$elm_test$Expect$equal,
+																{
+																	ctor: '::',
+																	_0: 4,
+																	_1: {
+																		ctor: '::',
+																		_0: 3,
+																		_1: {
+																			ctor: '::',
+																			_0: 6,
+																			_1: {
+																				ctor: '::',
+																				_0: 9,
+																				_1: {
+																					ctor: '::',
+																					_0: 7,
+																					_1: {
+																						ctor: '::',
+																						_0: 5,
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}
+																		}
+																	}
+																},
+																_user$project$Main$postOrder(_user$project$Main$mytesttree));
+														}),
+													_1: {ctor: '[]'}
+												}
+											}
 										}),
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_community$elm_test$Test$describe,
+											'tests for map',
+											{
+												ctor: '::',
+												_0: A2(
+													_elm_community$elm_test$Test$test,
+													'map adding 1',
+													function (_p18) {
+														var newTree = _user$project$Main$preOrder(
+															A2(
+																_user$project$Main$map,
+																function (n) {
+																	return n + 1;
+																},
+																_user$project$Main$mytesttree));
+														return A2(
+															_elm_community$elm_test$Expect$equal,
+															{
+																ctor: '::',
+																_0: 6,
+																_1: {
+																	ctor: '::',
+																	_0: 4,
+																	_1: {
+																		ctor: '::',
+																		_0: 5,
+																		_1: {
+																			ctor: '::',
+																			_0: 8,
+																			_1: {
+																				ctor: '::',
+																				_0: 7,
+																				_1: {
+																					ctor: '::',
+																					_0: 10,
+																					_1: {ctor: '[]'}
+																				}
+																			}
+																		}
+																	}
+																}
+															},
+															newTree);
+													}),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
@@ -14084,9 +14257,9 @@ var _user$project$Example$suite = A2(
 	});
 
 var Elm = {};
-Elm['Example'] = Elm['Example'] || {};
-if (typeof _user$project$Example$main !== 'undefined') {
-    _user$project$Example$main(Elm['Example'], 'Example', undefined);
+Elm['TreeTests'] = Elm['TreeTests'] || {};
+if (typeof _user$project$TreeTests$main !== 'undefined') {
+    _user$project$TreeTests$main(Elm['TreeTests'], 'TreeTests', undefined);
 }
 
 if (typeof define === "function" && define['amd'])

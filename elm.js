@@ -8145,12 +8145,17 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
 
-var _user$project$Main$popTop = function (tree) {
+var _user$project$Main$postOrder = function (tree) {
 	var _p0 = tree;
 	if (_p0.ctor === 'Empty') {
-		return _elm_lang$core$Maybe$Nothing;
+		return {ctor: '[]'};
 	} else {
-		return _elm_lang$core$Maybe$Just(
+		return A2(
+			_elm_lang$core$List$append,
+			A2(
+				_elm_lang$core$List$append,
+				_user$project$Main$postOrder(_p0._1),
+				_user$project$Main$postOrder(_p0._2)),
 			{
 				ctor: '::',
 				_0: _p0._0,
@@ -8158,96 +8163,77 @@ var _user$project$Main$popTop = function (tree) {
 			});
 	}
 };
-var _user$project$Main$breadthFirst = function (tree) {
+var _user$project$Main$inOrder = function (tree) {
 	var _p1 = tree;
 	if (_p1.ctor === 'Empty') {
 		return {ctor: '[]'};
 	} else {
 		return A2(
 			_elm_lang$core$List$append,
-			{
-				ctor: '::',
-				_0: _p1._0,
-				_1: {ctor: '[]'}
-			},
 			A2(
 				_elm_lang$core$List$append,
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					{ctor: '[]'},
-					_user$project$Main$popTop(_p1._1)),
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					{ctor: '[]'},
-					_user$project$Main$popTop(_p1._2))));
+				_user$project$Main$inOrder(_p1._1),
+				{
+					ctor: '::',
+					_0: _p1._0,
+					_1: {ctor: '[]'}
+				}),
+			_user$project$Main$inOrder(_p1._2));
 	}
 };
-var _user$project$Main$postOrder = function (tree) {
+var _user$project$Main$preOrder = function (tree) {
 	var _p2 = tree;
 	if (_p2.ctor === 'Empty') {
 		return {ctor: '[]'};
 	} else {
 		return A2(
 			_elm_lang$core$List$append,
-			A2(
-				_elm_lang$core$List$append,
-				_user$project$Main$postOrder(_p2._1),
-				_user$project$Main$postOrder(_p2._2)),
 			{
 				ctor: '::',
 				_0: _p2._0,
-				_1: {ctor: '[]'}
-			});
-	}
-};
-var _user$project$Main$inOrder = function (tree) {
-	var _p3 = tree;
-	if (_p3.ctor === 'Empty') {
-		return {ctor: '[]'};
-	} else {
-		return A2(
-			_elm_lang$core$List$append,
-			A2(
-				_elm_lang$core$List$append,
-				_user$project$Main$inOrder(_p3._1),
-				{
-					ctor: '::',
-					_0: _p3._0,
-					_1: {ctor: '[]'}
-				}),
-			_user$project$Main$inOrder(_p3._2));
-	}
-};
-var _user$project$Main$preOrder = function (tree) {
-	var _p4 = tree;
-	if (_p4.ctor === 'Empty') {
-		return {ctor: '[]'};
-	} else {
-		return A2(
-			_elm_lang$core$List$append,
-			{
-				ctor: '::',
-				_0: _p4._0,
-				_1: _user$project$Main$preOrder(_p4._1)
+				_1: _user$project$Main$preOrder(_p2._1)
 			},
-			_user$project$Main$preOrder(_p4._2));
+			_user$project$Main$preOrder(_p2._2));
 	}
+};
+var _user$project$Main$reduce = F3(
+	function (fun, accumulator, tree) {
+		var _p3 = tree;
+		if (_p3.ctor === 'Empty') {
+			return accumulator;
+		} else {
+			return A3(
+				fun,
+				_p3._0,
+				A3(_user$project$Main$reduce, fun, accumulator, _p3._1),
+				A3(_user$project$Main$reduce, fun, accumulator, _p3._2));
+		}
+	});
+var _user$project$Main$reduceSum = function (tree) {
+	return A3(
+		_user$project$Main$reduce,
+		F3(
+			function (accumulator, l, r) {
+				return (accumulator + l) + r;
+			}),
+		0,
+		tree);
 };
 var _user$project$Main$fold = F3(
 	function ($function, accumulator, tree) {
 		fold:
 		while (true) {
-			var _p5 = tree;
-			if (_p5.ctor === 'Empty') {
+			var _p4 = tree;
+			if (_p4.ctor === 'Empty') {
 				return accumulator;
 			} else {
-				var thisNode = A2($function, _p5._0, accumulator);
-				var _v6 = $function,
-					_v7 = A3(_user$project$Main$fold, $function, thisNode, _p5._1),
-					_v8 = _p5._2;
-				$function = _v6;
-				accumulator = _v7;
-				tree = _v8;
+				var thisNode = A2($function, _p4._0, accumulator);
+				var _v5 = $function,
+					_v6 = A3(_user$project$Main$fold, $function, thisNode, _p4._1),
+					_v7 = _p4._2;
+				$function = _v5;
+				accumulator = _v6;
+				tree = _v7;
 				continue fold;
 			}
 		}
@@ -8276,7 +8262,7 @@ var _user$project$Main$foldContains = F2(
 	function (tree, item) {
 		return A3(
 			_user$project$Main$fold,
-			function (_p6) {
+			function (_p5) {
 				return F2(
 					function (x, y) {
 						return x || y;
@@ -8287,44 +8273,54 @@ var _user$project$Main$foldContains = F2(
 								return _elm_lang$core$Native_Utils.eq(x, y);
 							}),
 						item,
-						_p6));
+						_p5));
 			},
 			false,
 			tree);
 	});
+var _user$project$Main$foldDepth = function (tree) {
+	return A3(
+		_user$project$Main$fold,
+		F2(
+			function (val, acc) {
+				return 1 + acc;
+			}),
+		0,
+		tree);
+};
 var _user$project$Main$contains = F2(
 	function (tree, item) {
-		var _p7 = tree;
-		if (_p7.ctor === 'Empty') {
+		var _p6 = tree;
+		if (_p6.ctor === 'Empty') {
 			return false;
 		} else {
-			return _elm_lang$core$Native_Utils.eq(_p7._0, item) ? true : (A2(_user$project$Main$contains, _p7._1, item) || A2(_user$project$Main$contains, _p7._2, item));
+			return _elm_lang$core$Native_Utils.eq(_p6._0, item) ? true : (A2(_user$project$Main$contains, _p6._1, item) || A2(_user$project$Main$contains, _p6._2, item));
 		}
 	});
 var _user$project$Main$flatten = function (tree) {
-	var _p8 = tree;
-	if (_p8.ctor === 'Empty') {
+	var _p7 = tree;
+	if (_p7.ctor === 'Empty') {
 		return {ctor: '[]'};
 	} else {
 		return A2(
 			_elm_lang$core$List$append,
-			_user$project$Main$flatten(_p8._1),
+			_user$project$Main$flatten(_p7._1),
 			A2(
 				_elm_lang$core$List$append,
 				{
 					ctor: '::',
-					_0: _p8._0,
+					_0: _p7._0,
 					_1: {ctor: '[]'}
 				},
-				_user$project$Main$flatten(_p8._2)));
+				_user$project$Main$flatten(_p7._2)));
 	}
 };
 var _user$project$Main$sum = function (tree) {
-	var _p9 = tree;
-	if (_p9.ctor === 'Empty') {
+	var _p8 = tree;
+	if (_p8.ctor === 'Empty') {
 		return 0;
 	} else {
-		return (_p9._0 + _user$project$Main$sum(_p9._1)) + _user$project$Main$sum(_p9._2);
+		return (_p8._0 + _user$project$Main$sum(_p8._1)) + _user$project$Main$sum(_p8._2);
 	}
 };
 var _user$project$Main$display = F2(
@@ -8346,14 +8342,14 @@ var _user$project$Main$display = F2(
 			});
 	});
 var _user$project$Main$depth = function (tree) {
-	var _p10 = tree;
-	if (_p10.ctor === 'Empty') {
+	var _p9 = tree;
+	if (_p9.ctor === 'Empty') {
 		return 0;
 	} else {
 		return 1 + A2(
 			_elm_lang$core$Basics$max,
-			_user$project$Main$depth(_p10._1),
-			_user$project$Main$depth(_p10._2));
+			_user$project$Main$depth(_p9._1),
+			_user$project$Main$depth(_p9._2));
 	}
 };
 var _user$project$Main$Node = F3(
@@ -8367,22 +8363,22 @@ var _user$project$Main$singleton = function (v) {
 };
 var _user$project$Main$insert = F2(
 	function (x, tree) {
-		var _p11 = tree;
-		if (_p11.ctor === 'Empty') {
+		var _p10 = tree;
+		if (_p10.ctor === 'Empty') {
 			return _user$project$Main$singleton(x);
 		} else {
-			var _p14 = _p11._0;
-			var _p13 = _p11._2;
-			var _p12 = _p11._1;
-			return (_elm_lang$core$Native_Utils.cmp(x, _p14) > 0) ? A3(
+			var _p13 = _p10._0;
+			var _p12 = _p10._2;
+			var _p11 = _p10._1;
+			return (_elm_lang$core$Native_Utils.cmp(x, _p13) > 0) ? A3(
 				_user$project$Main$Node,
-				_p14,
-				_p12,
-				A2(_user$project$Main$insert, x, _p13)) : ((_elm_lang$core$Native_Utils.cmp(x, _p14) < 0) ? A3(
+				_p13,
+				_p11,
+				A2(_user$project$Main$insert, x, _p12)) : ((_elm_lang$core$Native_Utils.cmp(x, _p13) < 0) ? A3(
 				_user$project$Main$Node,
-				_p14,
-				A2(_user$project$Main$insert, x, _p12),
-				_p13) : tree);
+				_p13,
+				A2(_user$project$Main$insert, x, _p11),
+				_p12) : tree);
 		}
 	});
 var _user$project$Main$fromList = function (xs) {
@@ -8416,6 +8412,17 @@ var _user$project$Main$niceTree = _user$project$Main$fromList(
 			}
 		}
 	});
+var _user$project$Main$foldMap = F2(
+	function ($function, tree) {
+		return A3(
+			_user$project$Main$fold,
+			function (x) {
+				return _user$project$Main$insert(
+					$function(x));
+			},
+			_user$project$Main$empty,
+			tree);
+	});
 var _user$project$Main$mytesttree = A2(
 	_user$project$Main$insert,
 	6,
@@ -8434,15 +8441,15 @@ var _user$project$Main$mytesttree = A2(
 					_user$project$Main$singleton(5))))));
 var _user$project$Main$map = F2(
 	function (f, tree) {
-		var _p15 = tree;
-		if (_p15.ctor === 'Empty') {
+		var _p14 = tree;
+		if (_p14.ctor === 'Empty') {
 			return _user$project$Main$Empty;
 		} else {
 			return A3(
 				_user$project$Main$Node,
-				f(_p15._0),
-				A2(_user$project$Main$map, f, _p15._1),
-				A2(_user$project$Main$map, f, _p15._2));
+				f(_p14._0),
+				A2(_user$project$Main$map, f, _p14._1),
+				A2(_user$project$Main$map, f, _p14._2));
 		}
 	});
 var _user$project$Main$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
