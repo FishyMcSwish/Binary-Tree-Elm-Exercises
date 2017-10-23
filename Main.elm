@@ -237,7 +237,6 @@ foldMap function tree =
 
 foldDepth : Tree number -> number
 foldDepth tree =
-    --    fold (\val acc -> (1 + acc)) 0 tree
     reduce (\v l r -> 1 + max l r) 0 tree
 
 
@@ -278,7 +277,3 @@ postOrder tree =
 
         Node x left right ->
             List.append (List.append (postOrder left) (postOrder right)) [ x ]
-
-
-
---TODO: breadth first search??
