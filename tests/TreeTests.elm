@@ -73,22 +73,9 @@ suite =
                     Expect.equal [ 4, 3, 6, 9, 7, 5 ] (postOrder mytesttree)
             ]
         , describe "tests for map"
-            [ test "map adding 1" <|
+            [ test "foldmap equals map" <|
                 \_ ->
-                    let
-                        newTree =
-                            preOrder
-                                (map (\n -> n + 1) mytesttree)
-                    in
-                        Expect.equal [ 6, 4, 5, 8, 7, 10 ] newTree
-            , test "foldMap adding 1" <|
-                \_ ->
-                    let
-                        newTree =
-                            preOrder
-                                (foldMap (\n -> n + 1) mytesttree)
-                    in
-                        Expect.equal [ 6, 4, 5, 8, 7, 10 ] newTree
+                    Expect.equal (foldMap (\n -> n + 1) mytesttree) (map (\n -> n + 1) mytesttree)
             ]
         , describe "tests for foldDepth"
             [ test "depth of mytestttee" <|
